@@ -34,6 +34,8 @@ library(car)
 library(lattice)
 #install.packages('RcolorBrewer')
 library(RColorBrewer)
+#install.packages("dplyr")
+library(dplyr)
 ```
 
 
@@ -57,6 +59,7 @@ column names, etc.
 > Before creating any plots, we will explore the dataset. 
 > Using commands, will retrive counts fo rows and columns, column names, etc.
 > We are using names(), str(), dim(), head() to inspect the dataset
+>
 ```{r echo=FALSE, Analyze_Data}
 
 # Retrieve column names- uncomment to view
@@ -80,7 +83,7 @@ dim(loanData)
 run some summaries of the data and create univariate plots to understand the 
 structure of the individual variables in the dataset. 
 > Run summary statistics on the data
-
+>
 
 ```{r echo=FALSE, Univariate_Plots}
 # uncomment to view
@@ -89,15 +92,16 @@ structure of the individual variables in the dataset.
 
 #### **Plot 1**: 
 > First, we shall analyze the different income ranges of lon recepients. While 
-income does not correlate to loan repayment success, it is a useful factor to segment customer base.
+income does not correlate to loan repayment success, it is a useful factor to 
+segment customer base.
 > We illustrate a simple bar plot with counts of number of records in each 
 income bracket.
 > We can see that 25K-74.999K are the biggest loan audiences.
-
+>
 ```{r echo=FALSE, Univariate_Plots_1}
 ####Simple Bar Plot showing number of records for each Income Range Bracket
-ggplot(data=loanData, aes(x=IncomeRange), main="Income Range Distribution", 
-  	xlab="Number of loan records by Status") + 
+ggplot(data=loanData, aes(x=IncomeRange))+ 
+  	xlab("Number of loan records by Income Range (USD)") + 
   	geom_bar()+ ggtitle("Income Range Distribution") +
   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
@@ -107,12 +111,13 @@ ggplot(data=loanData, aes(x=IncomeRange), main="Income Range Distribution",
 > Now, we shall analyze the estimated loss amount in each loan transaction.
 > We can plot a histogram using the concept of bar plots.
 > We can see that 25K-74.999K are the biggest loan audiences.
- > As clear form the plot, this ratio is low.
- 
+> As clear form the plot, this ratio is low.
+>
+
 ```{r echo=FALSE, Univariate_Plots_2_b}  
 ####Create histogram of loan Estimated Loss amount
-ggplot(data = loanData, aes(x=EstimatedLoss)) + geom_bar(stat="count")+
-ggtitle("Estimated Loss Distribution")
+ggplot(data = loanData, aes(x=EstimatedLoss)) + geom_histogram(binwidth = 0.01)+
+ggtitle("Estimated Loss Distribution") + xlab("Estimated Loss")
 ```
 
 
@@ -121,11 +126,15 @@ ggtitle("Estimated Loss Distribution")
 > This is an important metric Based on the results, any high performing segment 
 can be favored for future loan transactions.
 > It can be seen here that income groups with salries (Employment and Full time)
-form the major cohort of the loan applicants. However, as categories like Not Employed and Other are present in addition to null values, this is not a very useful stand alone variable.
+form the major cohort of the loan applicants. However, as categories like Not 
+Employed and Other are present in addition to null values, this is not a very 
+useful stand alone variable.
+>
+
 ```{r echo=FALSE, Univariate_Plots_3}
 ####Simple Bar Plot showing number of records for each Employment Status Bracket
-ggplot(data=loanData, aes(x=EmploymentStatus), main="Employment Status Distribution", 
-  	xlab="Number of loan records by Employment Status") + geom_bar()+ 
+ggplot(data=loanData, aes(x=EmploymentStatus))+
+  	xlab("Number of loan records by Employment Status") + geom_bar()+ 
   	ggtitle(" Employment Status Distribution") +
   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
@@ -137,11 +146,15 @@ ratio.
 > We study this using a bar plot.
 > Again, as a single variable, while not very insightful, it does demonstrate 
 that most of the applicants have favorable debt to income ratio. 
->This is suggestive of stringent checks in the loan application process, for instance.
+>This is suggestive of stringent checks in the loan application process, 
+for instance.
+>
+
 ```{r echo=FALSE, Univariate_Plots_4}
 ####Create plot of borrower's DebtToIncomeRatio
 ggplot(data = loanData, aes(x=DebtToIncomeRatio)) + geom_bar(stat="bin")+
-ggtitle("Debt to Income ratio Distribution")
+ggtitle("Debt to Income ratio Distribution")+
+xlab("Debt to Income Ratio")
 ```
 
 #### **Plot 6**
@@ -150,24 +163,32 @@ records. The principal sum, in conjunction with debt to income ratio, can give
 provide pointers on the success of loans.
 > We study this using a bar plot.
 > Most loans amounts fall in the low to mid range.
+>
+
 ```{r echo=FALSE, Univariate_Plots_6}
 ####Create histogram of loan Principal amount
-ggplot(data = loanData, aes(x=LoanOriginalAmount)) + geom_bar(stat="bin") +ggtitle("Loan Principal Amount Distribution")
+ggplot(data = loanData, aes(x=LoanOriginalAmount)) + geom_bar(stat="bin") +
+ggtitle("Loan Principal Amount Distribution")+
+xlab("Loan Original Amount (USD)")
 ```
 
 
 #### **Plot 7**
-> Next, we explore the distribution of loan amounts with geographic locations to see if a pattern exists with loan requirements.
+> Next, we explore the distribution of loan amounts with geographic locations 
+to see if a pattern exists with loan requirements.
 > We study this using a bar plot.
 > It is interesting to note that some states have very high number of borrowers 
 while others barely have any. Of course, this observation to the limitations of 
 data sampling. 
 > Potential causes include uneven sampling of data, lack of lenders and 
 businesses.
+>
+
 ```{r echo=FALSE, Univariate_Plots_7}
 #### Simple histogram Plot showing number of records for borrower States
-ggplot(data=loanData, aes(x=BorrowerState), 
-  	xlab="Number of loan records by State") + geom_bar()+  ggtitle("Loan State Distribution") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+ggplot(data=loanData, aes(x=BorrowerState))+ 
+  	xlab("Number of loan records by State") + geom_bar()+  
+  	ggtitle("Loan State Distribution") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
 ```
 
 #### **Plot 8**
@@ -176,13 +197,18 @@ ggplot(data=loanData, aes(x=BorrowerState),
 > Since majority of the loans have not been assigned a grade, we are pointed to 
 a good line of analytical scrutiny. 
 > It can be that the loan process/ stage is such that grades are not yet 
-available. Or that the applicant has limited credit history, or that the loan applicant is a joint venture. In combination with loan status, this might yield 
+available. Or that the applicant has limited credit history, or that the loan 
+applicant is a joint venture. In combination with loan status, this might yield 
 better insights.
+>
+
 ```{r echo=FALSE, Univariate_Plots_8}
 #### Simple Bar Plot showing number of records for CreditGrade 
 counts <- table(loanData$CreditGrade)
-ggplot(data=loanData, aes(x=CreditGrade), main="Employment Status Distribution", 
-  	xlab="Number of loan records by Employment Status") + geom_bar()+
+ggplot(data=loanData, aes(x=CreditGrade))+ 
+  	xlab("Number of loan records by Employment Status") + 
+  	ggtitle("Credit Grade Distribution")+
+  	geom_bar()+
   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
 ```
 
@@ -190,23 +216,31 @@ ggplot(data=loanData, aes(x=CreditGrade), main="Employment Status Distribution",
 > Next, we explore the distribution of loan term among the loan applicants.
 > We study this using a histogram. 
 > We can conclude that 36 month loans are most popular.
-> So, our next iteration of analysis can be to see if this is a result of rates, offerings, or if other fcators contribute.
+> So, our next iteration of analysis can be to see if this is a result of rates,
+offerings, or if other fcators contribute.
+>
+
 ```{r echo=FALSE, Univariate_Plots_9}
 ####Create histogram of loan term
 #hist(loanData$Term,col="blue")
 loanData$Term <- factor(loanData$Term, levels=c(12,36,60), ordered=TRUE)
 ggplot(data = loanData, aes(x=Term)) + geom_bar(stat="count")+
-ggtitle("Loan Term")
+ggtitle("Loan Term Histogram")+
+xlab("Loan Term (months)")
 
 ```
 
 #### **Plot 10**
-> Next, we explore the distribution of Monthly loan payments among the loan applicants.
+> Next, we explore the distribution of Monthly loan payments among the loan 
+applicants.
 > We study this using a bar plots. 
+>
+
 ```{r echo=FALSE, Univariate_Plots_10}
 ####Create bar plot of Monthly loan payment
 ggplot(data = loanData, aes(x=MonthlyLoanPayment)) + geom_bar(stat="bin")+
-ggtitle("Monthly Loan Payment Distribution")
+ggtitle("Monthly Loan Payment Distribution")+
+xlab("Monthly Loan Payment (USD)")
 ```
 
 
@@ -214,12 +248,14 @@ ggtitle("Monthly Loan Payment Distribution")
 > Next, we explore the distribution of Employment status among the loan 
 applicants.
 > We study this using a Cleveland dot chart 
+>
+
 ```{r echo=FALSE, Univariate_Plots_Pie_11}
 #### Create Cleveland Dot Chart for Employment Status
 mytable <- table(loanData$EmploymentStatus)
 lbls <- paste(names(mytable))
 dotchart(mytable, labels = lbls, 
-  	main="Dot Chart of Employment Status")
+  	main="Dot Chart of Employment Status", xlab="counts") 
 ```
 
 
@@ -227,12 +263,19 @@ dotchart(mytable, labels = lbls,
 > Next, we explore the distribution of loan status among the loan 
 applicants.
 > We study this using a simple bar chart 
-> Based on our plot, we see that maximum loans are current or completed. This can bode well for the institution depending on what the financial gains are from current loans.
-> We also can note that chargedoff, defaulted and past due loans are fewer in number which is a positive factor.
+> Based on our plot, we see that maximum loans are current or completed. This 
+can bode well for the institution depending on what the financial gains are from
+current loans.
+> We also can note that chargedoff, defaulted and past due loans are fewer in 
+number which is a positive factor.
+>
+
 ```{r echo=FALSE, Univariate_Plots_12}
 #### Create Simple Bar Chart for Loan Status
 ggplot(data = loanData, aes(x=LoanStatus)) + geom_bar(stat="count")+
-ggtitle("Loan Status Distribution")+ theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggtitle("Loan Status Distribution")+ 
+theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+
+xlab("Loan Status") +ylab("counts")
 
 ```
 
@@ -243,10 +286,15 @@ transactions to gauge what the feasability is.
 > We study this using a simple bar chart 
 > We understand that lender yield, while not super high is fairly high around 
 the mid levels. 
+>
+
 ```{r echo=FALSE, Univariate_Plots_13}
 #### Create Simple Bar Chart for Lender Yield Status
-ggplot(data = loanData, aes(x=LenderYield)) + geom_bar(stat="count")+
-ggtitle("Lender Yield Distribution")+ theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(data = loanData, aes(x=LenderYield)) + geom_histogram(binwidth=0.01)+
+ggtitle("Lender Yield Distribution")+ 
+theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+
+xlab("Lender Yield")+
+ylab("counts")
 
 ```
 
@@ -254,10 +302,14 @@ ggtitle("Lender Yield Distribution")+ theme(axis.text.x=element_text(angle=90,hj
 #### **Plot 14**
 > Further, we explore the investigate what the typical borrower rates are
 > We study this using a simple bar chart and get typical rates for loans
+>
+
 ```{r echo=FALSE, Univariate_Plots_14}
 #### Create Simple distribution Chart for Borrower Rate
-ggplot(data = loanData, aes(x=BorrowerRate)) + geom_bar(stat="count")+
-ggtitle("Borrower Rate Distribution")+ theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
+ggplot(data = loanData, aes(x=BorrowerRate)) + geom_histogram(binwidth=0.01)+
+ggtitle("Borrower Rate Distribution")+ 
+theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))+
+xlab("Borrower Rate") +ylab("counts")
 ```
 
 ## Univariate Analysis
@@ -293,35 +345,46 @@ relationships
 between variables that might be interesting to look at in this section. 
 
 #### **Plot 15**
-> Here, we explore the relation if any, between Loan Original Amount versus Estimated Loss.
+> Here, we explore the relation if any, between Loan Original Amount versus 
+Estimated Loss.
 > We study this using a simple scatter plot 
-> As evident here, the plot is roughly negatively sloped. As the loan amount increases, estimated losses reduce. 
+> As evident here, the plot is roughly negatively sloped. As the loan amount 
+increases, estimated losses reduce. 
 > This can be a good point for further investigation.
 > We can check if a correlation exists, if it is causal.
 > The relation hints at many plausible reasons, such as higher background check 
 for higher loan amounts, greater payment ability with higher borrowing ability, 
-more steps or stronger action to reclaim larger loan amounts or simply greater incentive to repay larger loans to avoid crippling compound interests.\n
+more steps or stronger action to reclaim larger loan amounts or simply greater 
+incentive to repay larger loans to avoid crippling compound interests.\n
 
 
 ```{r echo=FALSE, Bivariate_Plots}
 # Scatter plot of Loan Original Amount versus Estimated Loss
-ggplot(data = loanData, aes(x=LoanOriginalAmount, y=EstimatedLoss), 
-     xlab="Loan Original 
-     Amount ", ylab="Estimated Loss")+geom_point(shape=23)+
+ggplot(data = loanData, aes(x=LoanOriginalAmount, y=EstimatedLoss))+ 
+     xlab("Loan Original Amount (USD)")+ ylab("Estimated Loss")+
+     geom_point(shape=23, alpha=0.1, size=1)+
+           geom_smooth(method = "lm", se = FALSE,size=1)  +
       ggtitle("Loan Original Amount versus Estimated Loss")
 ```
 
 
 #### **Plot 16**
-> Here, we explore the relation if any, between Debt To Income Ratio versus Estimated Loss.
+> Here, we explore the relation if any, between Debt To Income Ratio versus 
+Estimated Loss.
 > We study this using a simple scatter plot 
 > This is an interesting plot because the concentration of points is on Y-axis.
 > This again is a line of exploration worth pursuing further.
+>
+
 ```{r echo=FALSE, Bivariate_Plots_1}
 #### Scatter plot of Debt To Income Ratio versus Estimated Loss
-ggplot(aes(x=DebtToIncomeRatio, y=EstimatedLoss), data=loanData, 
-      xlab="Loan Status ", 
-     ylab="Estimated Loss")+geom_point()+ ggtitle("Debt to Income Ratio versus Estimated Loss")
+ggplot(aes(x=DebtToIncomeRatio, y=EstimatedLoss), data=loanData)+ 
+      xlab("Loan Status ")+ 
+     ylab("Estimated Loss")+
+     geom_point(alpha = 0.1, size = 1) +
+      geom_smooth(method = "lm", se = FALSE,size=1) 
+     ggtitle("Debt to Income Ratio versus Estimated Loss")
+
 ```
 
 
@@ -330,11 +393,14 @@ ggplot(aes(x=DebtToIncomeRatio, y=EstimatedLoss), data=loanData,
 Loss.
 > We study this using a simple scatter plot 
 > The losses are roughly equal over the income ranges.
+>
+
 ```{r echo=FALSE, Bivariate_Plots_2}
-#### Scatter plot of Borrower APR versus IncomeRange
-ggplot(aes(x=IncomeRange, y=EstimatedLoss), data=loanData, main="Borrower
-     APR versus Estimated Loss", xlab="IncomeRange", ylab="Estimated Loss")+
-     geom_point()+ggtitle("Scatter plot of Borrower APR versus IncomeRange")
+#### Jitter plot of Borrower APR versus IncomeRange
+
+plot(jitter(loanData$EstimatedLoss), loanData$IncomeRange , pch=20, 
+col=rgb(0.1, 0.2, 0.8, 0.3) , ylab="Income Range", xlab="Estimated Loss", 
+bty="o" , main="Borrower APR versus IncomeRange")
 
 ```
 
@@ -344,10 +410,16 @@ ggplot(aes(x=IncomeRange, y=EstimatedLoss), data=loanData, main="Borrower
 Loss.
 > We study this using a simple scatter plot 
 > The losses are roughly equal over the income ranges.
+>
+
 ```{r echo=FALSE, Bivariate_Plots_3}
 #### Scatter plot of Borrower APR versus Estimated Loss
 ggplot(data = loanData , aes(x=BorrowerAPR, y=EstimatedLoss))+
-  geom_point(color="red", alpha=0.25)+ggtitle("Borrower APR versus Estimated Loss")
+geom_point(color="red",alpha = 0.1, size = 1) +
+      geom_smooth(method = "lm", se = FALSE,size=1) +
+  ggtitle("Borrower APR versus Estimated Loss")+
+  xlab("Borrower APR")+
+ylab("Estimated Loss")
 
 ```
 
@@ -385,7 +457,9 @@ Answers to the questions below are below.
 of each. This is interesting and needs to be probed further in conjunction with 
 terms and rates.
 > EmploymentStatus, DebtToIncomeRatio, IncomeRange, LoanStatus, BorrowerState, 
-CreditGrade, Term were the other variables observed. Borrower APR and Estimated Loss show a direct correlation, which can be attributed to higher rates being difficult to return and hence showing greater loss for defaulters.
+CreditGrade, Term were the other variables observed. Borrower APR and Estimated 
+Loss show a direct correlation, which can be attributed to higher rates being 
+difficult to return and hence showing greater loss for defaulters.
 
 
 ### Did you observe any interesting relationships between the other features?
@@ -405,50 +479,56 @@ a few multivariate plots to investigate more complex interactions between
 variables.
 
 
+
+
 #### **Plot 19**
-> Here, we explore the relation if any, between Estimated Loss, Loan Original Amount and Credit Grade
-> We study this using a scatter plot and using shape to represent the third vraible.
-> Since estimated loss and Principal were roughly inversely proportional, we can probe to see if credit grade had a role to play. We see that we cannot make any inferences on this aspect.
-```{r echo=FALSE, Bivariate_Plots_4}
-#### Relation between Estimated Loss, Loan Original Amount and Credit Grade
-
-ggplot(data = loanData , 
-aes(x=EstimatedLoss, y=LoanOriginalAmount, shape=CreditGrade))+
-  geom_point(aes(shape=CreditGrade)) +
-  theme(legend.position="top")+
-  ggtitle("Estimated Loss, Loan Original Amount and Credit Grade")
-```
-
-
-#### **Plot 20**
-> Next, we explore the relation if any, between Estimated Loss and Loan Original Amount but with Income range
+> Next, we explore the relation if any, between Estimated Loss and Loan Original
+Amount but with Income range
 > We study this using a scatter plot and colors to represent the third variable.
-> Since estimated loss and Principal were roughly inversely proportional, we can probe to see if income range had a role to play. 
-> Also shown here is the linear model. We can note that losses reduce with increased income range. 
->Similar to our earlier analysis, this can stem from many plausible reasons, such as higher background check for higher loan amounts, greater payment ability with higher borrowing ability, more steps or stronger action to reclaim larger loan amounts or simply greater incentive to repay larger loans to avoid crippling compound interests.
+> Since estimated loss and Principal were roughly inversely proportional, we can
+probe to see if income range had a role to play. 
+> Also shown here is the linear model. We can note that losses reduce with 
+increased income range. 
+>Similar to our earlier analysis, this can stem from many plausible reasons, 
+such as higher background check for higher loan amounts, greater payment ability
+with higher borrowing ability, more steps or stronger action to reclaim larger
+loan amounts or simply greater incentive to repay larger loans to avoid 
+crippling compound interests.
 
 
 ```{r echo=FALSE, Bivariate_Plots_5}
 #### Relation between Estimated Loss, Loan Original Amount and Income Range
 p <- ggplot(data = loanData , aes(x=EstimatedLoss, y=LoanOriginalAmount, 
-color = IncomeRange))+
-  geom_point()+ geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
+color = IncomeRange), size=1/2)+
+  geom_point(alpha=0.1)+ geom_smooth(method=lm, se=FALSE, fullrange=TRUE)+
   theme_classic()
-p+scale_color_brewer(palette="Dark2")+ggtitle("Relation between Estimated Loss, Loan Original Amount and Income Range")
+p+scale_color_brewer(palette="Dark2")+
+ggtitle("Plotting Estimated Loss,Loan Original Amount and Income Range")+
+xlab("Estimated Loss")+
+ylab("Loan Original Amount (USD)")
 ```
 
 
-#### **Plot 21**
-> Next, we explore the relation if any, between Estimated Loss and Loan Original Amount but with Monthly Loan Payment
+#### **Plot 20**
+> Next, we explore the relation if any, between Estimated Loss and Loan Original
+Amount but with Monthly Loan Payment
 > We study this using a scatter plot and size to represent the third variable.
-> Since estimated loss and Principal were roughly inversely proportional, we can probe to see if monthly payments had a role to play. 
-> We can see that the monthly payments increase with increase in original loan amount, but not contribute to any spikes in estimated loss. 
+> Since estimated loss and Principal were roughly inversely proportional, we can
+probe to see if monthly payments had a role to play. 
+> We can see that the monthly payments increase with increase in original loan 
+amount, but not contribute to any spikes in estimated loss. 
 > While not contributing new insights, it fits with the our inferences so far 
 that higher the loan amount, lesser the estimated loss.
+>
+
 ```{r echo=FALSE, Bivariate_Plots_6}
 ####Relation between Estimated Loss, Loan Original Amount & Monthly Loan Payment
 ggplot(data = loanData , aes(x=EstimatedLoss, y=LoanOriginalAmount, 
-size = MonthlyLoanPayment)) + geom_point()
+size = MonthlyLoanPayment)) + geom_point(alpha=0.1, size=1)+
+      geom_smooth(method = "lm", se = FALSE,size=2)  +
+ggtitle("Plotting Estimated Loss, Loan Original Amount & Monthly Loan Payment")+
+xlab("Estimated Loss")+
+ylab("Loan Original Amount (USD)")
 
 ```
 
@@ -485,8 +565,10 @@ between Estimated Loss, Loan Original Amount and Income Range)
 
 ```{r echo=FALSE, Plot_One}
 #### Simple histogram Plot showing number of records for borrower States
-ggplot(data=loanData, aes(x=BorrowerState), 
-  	xlab="Number of loan records by State") + geom_bar()+  ggtitle("Loan State Distribution") + theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
+ggplot(data=loanData, aes(x=BorrowerState)) + geom_bar()+  
+  	ggtitle("Loan State Distribution") +
+  	xlab("Number of loan records by State")+
+  	theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) 
 ```
 
 
@@ -498,13 +580,17 @@ data sampling.
 businesses.
 > Since only a single categorical variable is being diplayed, a bar plot is 
 suitable.
+>
 
 ####Scatterplot for Borrower APR and Estimated Loss
 ```{r echo=FALSE, Plot_Two}
 #### Scatter plot of Borrower APR versus Estimated Loss
-
 ggplot(data = loanData , aes(x=BorrowerAPR, y=EstimatedLoss))+
-  geom_point(color="red", alpha=0.25)+ggtitle("Borrower APR versus Estimated Loss")
+geom_point(color="red",alpha = 0.1, size = 1) +
+geom_smooth(method = "lm", se = FALSE,size=1)  +
+  ggtitle("Borrower APR versus Estimated Loss")+
+  xlab("Borrower APR")+
+ylab("Estimated Loss")
 
 ```
 
@@ -519,12 +605,17 @@ recepient.
 obvious choice.
 > The graph is supported by the correlation (value is 0.9495) done in prior 
 sections.  
+>
 
 ```{r echo=FALSE, Plot_Three}
 
 ####Relation between Estimated Loss, Loan Original Amount & Monthly Loan Payment
 ggplot(data = loanData , aes(x=EstimatedLoss, y=LoanOriginalAmount, 
-size = MonthlyLoanPayment)) + geom_point()
+size = MonthlyLoanPayment)) + geom_point(alpha=0.1, size=1)+
+      geom_smooth(method = 'lm', se = FALSE,size=2)  +
+ggtitle("Estimated Loss vs Loan Original Amount vs Monthly Loan Payment")+
+xlab("Estimated Loss") +
+ylab("Loan Original Amount (USD)")
 
 ```
 
@@ -540,7 +631,7 @@ showed low losses.
 instalments are typical of medium-high income groups as evident by the preceding
 scatterplot (Relation between Estimated Loss, Loan Original Amount and Income 
 Range)
-------
+  
 
 
 ## Reflection
